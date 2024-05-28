@@ -15,3 +15,11 @@
 - [Use firebase SDK](./simple-firebase/)
 - [Tensorflow JS for in browser ML](./tfjs-object-detection/)
 - [Sample React App](./simple-react/)
+
+## Deploying
+
+- GitHub Pages
+- Vercel
+- Firebase
+- Azure Blob
+- AWS S3
