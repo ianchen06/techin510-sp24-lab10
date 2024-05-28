@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firebase App</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Firebase App</h1>
+      <input type="text" name="todo" id="todo" />
+      <button id="addTodo">Add Todo</button>
+      <ul id="todos"></ul>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore-compat.js"></script>
+    <script>
+      // Copy and paste your Firebase project configuration
+      const firebaseConfig = {
+        apiKey: "",
+        authDomain: "",
+        projectId: "",
+        storageBucket: "",
+        messagingSenderId: "",
+        appId: "",
+        measurementId: "",
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      const button = document.getElementById("addTodo");
+
+      function renderTodos() {
+        db.collection("todos")
+          .orderBy("createdAt", "desc")
+          .get()
+          .then((querySnapshot) => {
+            // clear the list
+            document.getElementById("todos").innerHTML = "";
+            querySnapshot.forEach((doc) => {
+              const todo = doc.data();
+              const li = document.createElement("li");
+              li.textContent = todo.title;
+              document.getElementById("todos").appendChild(li);
+            });
+          });
+      }
+
+      button.addEventListener("click", () => {
+        const todo = document.getElementById("todo").value;
+        db.collection("todos")
+          .add({
+            title: todo,
+            completed: false,
+            createdAt: new Date(),
+          })
+          .then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+            document.getElementById("todo").value = "";
+            renderTodos();
+          });
+      });
+
+      renderTodos();
+    </script>
+  </body>
+</html>

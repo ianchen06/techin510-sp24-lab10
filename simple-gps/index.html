@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Location</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+  </head>
+  <body>
+    <main class="container">
+      <p id="location"></p>
+      <p id="weather-stn"></p>
+      <p id="weather"></p>
+      <button id="getLocation">Get weather for my location</button>
+    </main>
+
+    <script>
+      const button = document.getElementById("getLocation");
+      const loc = document.getElementById("location");
+      const weatherStn = document.getElementById("weather-stn");
+      const weather = document.getElementById("weather");
+
+      button.addEventListener("click", () => {
+        button.disabled = true;
+        button.innerHTML = "Getting location...";
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+
+            loc.textContent = `Your location is ${latitude}, ${longitude}`;
+
+            button.innerHTML = "Getting weather...";
+
+            fetch(`https://api.weather.gov/points/${latitude},${longitude}`)
+              .then((response) => response.json())
+              .then((data) => {
+                weatherStn.textContent = `The nearest weather station is ${data.properties.relativeLocation.properties.city}, ${data.properties.relativeLocation.properties.state}`;
+
+                const forecastUrl = data.properties.forecast;
+                return fetch(forecastUrl);
+              })
+              .then((response) => response.json())
+              .then((data) => {
+                const forecast = data.properties.periods[0].detailedForecast;
+                weather.textContent = `The weather is ${forecast}`;
+                button.disabled = false;
+                button.innerHTML = "Get Location";
+              })
+              .catch((error) => {
+                loc.textContent = `Error: ${error.message}`;
+                button.disabled = false;
+                button.innerHTML = "Get Location";
+              });
+
+            button.disabled = false;
+            button.innerHTML = "Get Location";
+          },
+          (error) => {
+            loc.textContent = `Error: ${error.message}`;
+            button.disabled = false;
+            button.innerHTML = "Get Location";
+          }
+        );
+      });
+    </script>
+  </body>
+</html>

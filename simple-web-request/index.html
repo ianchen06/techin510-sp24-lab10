@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What is my IP</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+  </head>
+  <body>
+    <main class="container">
+      <h1>What is my IP</h1>
+      <p id="ip"></p>
+      <button>Check my IP</button>
+    </main>
+
+    <script>
+      const button = document.querySelector("button");
+
+      button.addEventListener("click", () => {
+        button.disabled = true;
+        button.innerHTML = "Checking...";
+        fetch("https://api.ipify.org?format=json")
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("ip").textContent = `Your IP is ${data.ip}`;
+            button.disabled = false;
+            button.innerHTML = "Check my IP";
+          });
+      });
+    </script>
+  </body>
+</html>
